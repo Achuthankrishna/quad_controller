@@ -1,3 +1,13 @@
+/**
+ * @file vel_contro.hpp
+ * @author Vyshnav Achuthan (vyachu07@umd.edu)
+ * @brief 
+ * @version 0.1
+ * @date 2024-04-20
+ * 
+ * @copyright Copyright (c) 2024
+ * 
+ */
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 #include "std_msgs/msg/bool.hpp"
