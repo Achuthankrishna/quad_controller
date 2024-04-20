@@ -38,6 +38,14 @@ install(TARGETS
   viz
   DESTINATION lib/${PROJECT_NAME}
 )
-
+install(TARGETS
+  off_board
+  vel_control
+  DESTINATION lib/${PROJECT_NAME}
+)
+install(DIRECTORY
+launch
+DESTINATION share/${PROJECT_NAME}
+)
 # Necessary for ROS2 package
 ament_package()

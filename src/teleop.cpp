@@ -31,13 +31,23 @@ const std::map<char, std::array<double, 4>> moveBindings = {
 TeleopTwistKeyboard::TeleopTwistKeyboard()
     : Node("teleop_twist_keyboard"), arm_toggle_(false)
 {
-    pub_ = this->create_publisher<geometry_msgs::msg::Twist>("/offboard_velocity_cmd", 10);
-    arm_pub_ = this->create_publisher<std_msgs::msg::Bool>("/arm_message", 10);
+    // pub_ = this->create_publisher<geometry_msgs::msg::Twist>("/offboard_velocity_cmd", 10);
+    
+    // arm_pub_ = this->create_publisher<std_msgs::msg::Bool>("/arm_message", 10);
+    pub_ = this->create_publisher<geometry_msgs::msg::Twist>("/offboard_velocity_cmd", rclcpp::QoS(rclcpp::KeepLast(10)).reliable());
+    arm_pub_ = this->create_publisher<std_msgs::msg::Bool>("/arm_message", rclcpp::QoS(rclcpp::KeepLast(10)).reliable());
 
-    // Subscribe to the arm toggle topic
+    auto qos_profile = rclcpp::QoS(rclcpp::KeepLast(10)).reliable();
+
+    // Subscribe to the topics with the appropriate QoS settings
     auto arm_sub = this->create_subscription<std_msgs::msg::Bool>(
-        "/arm_toggle", 10, std::bind(&TeleopTwistKeyboard::armToggleCallback, this, std::placeholders::_1)
+        "/arm_toggle", qos_profile,
+        std::bind(&TeleopTwistKeyboard::armToggleCallback, this, std::placeholders::_1)
     );
+    // // Subscribe to the arm toggle topic
+    // auto arm_sub = this->create_subscription<std_msgs::msg::Bool>(
+    //     "/arm_toggle", 10, std::bind(&TeleopTwistKeyboard::armToggleCallback, this, std::placeholders::_1)
+    // );
 
     std::cout << R"(
 This node takes keypresses from the keyboard and publishes them
