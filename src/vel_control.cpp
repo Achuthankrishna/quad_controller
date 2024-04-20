@@ -50,12 +50,27 @@ void OffboardControl::arm_message_callback(const std_msgs::msg::Bool::SharedPtr 
     arm_message = msg->data;
     RCLCPP_INFO(this->get_logger(), "Arm Message: %d", arm_message);
 }
-
+std::string stateToString(State state) {
+    switch(state) {
+        case State::IDLE:
+            return "IDLE";
+        case State::ARMING:
+            return "ARMING";
+        case State::TAKEOFF:
+            return "TAKEOFF";
+        case State::LOITER:
+            return "LOITER";
+        case State::OFFBOARD:
+            return "OFFBOARD";
+        default:
+            return "UNKNOWN";
+    }
+}
 void OffboardControl::arm_timer_callback() {
     switch(current_state) {
         case State::IDLE:
             if(flightCheck && arm_message == true) {
-                current_state = "ARMING";
+                current_state = State::ARMING;
                 RCLCPP_INFO(this->get_logger(), "Arming");
             }
             break;
@@ -64,17 +79,17 @@ void OffboardControl::arm_timer_callback() {
                 current_state = State::IDLE;
                 RCLCPP_INFO(this->get_logger(), "Arming, Flight Check Failed");
             } else if(arm_state == px4_msgs::msg::VehicleStatus::ARMING_STATE_ARMED && myCnt > 10) {
-                current_state = "TAKEOFF";
+                current_state = State::TAKEOFF;
                 RCLCPP_INFO(this->get_logger(), "Arming, Takeoff");
             }
             arm();
             break;
         case State::TAKEOFF:
             if(!flightCheck) {
-                current_state = "IDLE";
+                current_state = State::IDLE;
                 RCLCPP_INFO(this->get_logger(), "Takeoff, Flight Check Failed");
             } else if(nav_state == px4_msgs::msg::VehicleStatus::NAVIGATION_STATE_AUTO_TAKEOFF) {
-                current_state = "LOITER";
+                current_state = State::LOITER;
                 RCLCPP_INFO(this->get_logger(), "Takeoff, Loiter");
             }
             arm();
@@ -82,17 +97,17 @@ void OffboardControl::arm_timer_callback() {
             break;
         case State::LOITER:
             if(!flightCheck) {
-                current_state = "IDLE";
+                current_state = State::IDLE;
                 RCLCPP_INFO(this->get_logger(), "Loiter, Flight Check Failed");
             } else if(nav_state == px4_msgs::msg::VehicleStatus::NAVIGATION_STATE_AUTO_LOITER) {
-                current_state = "OFFBOARD";
+                current_state = State::OFFBOARD;
                 RCLCPP_INFO(this->get_logger(), "Loiter, Offboard");
             }
             arm();
             break;
         case State::OFFBOARD:
             if(!flightCheck || arm_state == px4_msgs::msg::VehicleStatus::ARMING_STATE_DISARMED || failsafe == true) {
-                current_state = "IDLE";
+                current_state = State::IDLE;
                 RCLCPP_INFO(this->get_logger(), "Offboard, Flight Check Failed");
             }
             state_offboard();
@@ -105,7 +120,9 @@ void OffboardControl::arm_timer_callback() {
 
     if(last_state != current_state) {
         last_state = current_state;
-        RCLCPP_INFO(this->get_logger(),current_state);
+        std::string state_str = stateToString(current_state);
+        RCLCPP_INFO(this->get_logger(), state_str.c_str());
+        // RCLCPP_INFO(this->get_logger(),current_state);
     }
 
     myCnt++;
