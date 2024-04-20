@@ -16,11 +16,15 @@ class TeleopTwistKeyboard : public rclcpp::Node {
 public:
     TeleopTwistKeyboard();
     ~TeleopTwistKeyboard();
+    char getKey();
+    void publishTwist(const std::string& key);
 
 private:
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr pub_;
     rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr arm_pub_;
 
-    void publishTwist();
+   
+    bool arm_toggle_;
     void armToggleCallback(const std_msgs::msg::Bool::SharedPtr msg);
+    
 };

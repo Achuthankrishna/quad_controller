@@ -20,9 +20,16 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+const std::map<char, std::array<double, 4>> moveBindings = {
+    {'w', {1.0, 0.0, 0.0, 0.0}},   // Up
+    {'s', {-1.0, 0.0, 0.0, 0.0}},  // Down
+    {'a', {0.0, 0.0, 0.0, 1.0}},   // Yaw Left
+    {'d', {0.0, 0.0, 0.0, -1.0}},  // Yaw Right
+    {'\x1b', {0.0, 0.0, 0.0, 0.0}} // Stop
+};
+
 TeleopTwistKeyboard::TeleopTwistKeyboard()
-: Node("teleop_twist_keyboard"),
-  arm_toggle_(false)
+    : Node("teleop_twist_keyboard"), arm_toggle_(false)
 {
     pub_ = this->create_publisher<geometry_msgs::msg::Twist>("/offboard_velocity_cmd", 10);
     arm_pub_ = this->create_publisher<std_msgs::msg::Bool>("/arm_message", 10);
@@ -58,8 +65,8 @@ void TeleopTwistKeyboard::publishTwist(const std::string& key)
 {
     geometry_msgs::msg::Twist twist;
 
-    if (moveBindings.find(key) != moveBindings.end()) {
-        auto move = moveBindings[key];
+    if (moveBindings.find(key[0]) != moveBindings.end()) {
+        auto move = moveBindings.at(key[0]);
         twist.linear.x = move[0];
         twist.linear.y = move[1];
         twist.linear.z = move[2];
@@ -81,10 +88,11 @@ void TeleopTwistKeyboard::armToggleCallback(const std_msgs::msg::Bool::SharedPtr
     auto arm_msg = std::make_shared<std_msgs::msg::Bool>();
     arm_msg->data = arm_toggle_;
 
-    arm_pub_->publish(arm_msg);
+    arm_pub_->publish(*arm_msg); // Dereference the shared pointer
 
     RCLCPP_INFO(get_logger(), "Arm toggle is now: %s", arm_toggle_ ? "true" : "false");
 }
+
 
 char TeleopTwistKeyboard::getKey()
 {
