@@ -7,7 +7,14 @@
 #include "px4_msgs/msg/vehicle_attitude.hpp"
 #include "px4_msgs/msg/vehicle_command.hpp"
 #include "math.h"
-
+#include <rclcpp/clock.hpp> 
+enum class State {
+    IDLE,
+    ARMING,
+    TAKEOFF,
+    LOITER,
+    OFFBOARD
+};
 class OffboardControl : public rclcpp::Node {
 public:
     OffboardControl();
@@ -37,8 +44,8 @@ private:
     void offboard_velocity_callback(const geometry_msgs::msg::Twist::SharedPtr msg);
     void attitude_callback(const px4_msgs::msg::VehicleAttitude::SharedPtr msg);
     void cmdloop_callback();
-    std::string current_state;
-    std::string last_state;
+    State current_state;
+    State last_state;
     int myCnt;
     bool arm_message;
     bool flightCheck;
@@ -47,6 +54,8 @@ private:
     float yaw;
     float trueYaw;
     geometry_msgs::msg::Vector3 velocity;
-    px4_msgs::msg::VehicleStatus::NAVIGATION_STATE nav_state;
-    px4_msgs::msg::VehicleStatus::ARMING_STATE arm_state;
+    // px4_msgs::msg::VehicleStatus_<std::allocator<void>>::NAVIGATION_STATE_MAX nav_state;
+    // px4_msgs::msg::VehicleStatus_<std::allocator<void>>::ARMING_STATE_ARMED arm_state;
+    uint8_t nav_state;
+    uint8_t arm_state;
 };

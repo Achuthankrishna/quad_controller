@@ -21,9 +21,10 @@ find_package(nav_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED) 
 # Add your executable
 # add_executable(off_board src/control.cpp)
-# add_executable(vel_control src/vel_control.cpp)
+add_executable(vel_control src/vel_control.cpp)
 add_executable(viz src/visualizer.cpp)
 ament_target_dependencies(viz rclcpp sensor_msgs geometry_msgs px4_msgs nav_msgs visualization_msgs)
+ament_target_dependencies(vel_control rclcpp sensor_msgs geometry_msgs px4_msgs nav_msgs visualization_msgs)
 # Specify dependencies for your executable
 # ament_target_dependencies(viz
 #   rclcpp
