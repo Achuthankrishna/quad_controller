@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>quad_off_board</name>
+  <version>0.0.1</version>
+  <description>A ROS2 package for controlling a drone with PX4</description>
+
+  <maintainer email="you@example.com">Your Name</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>px4_msgs</depend>  <!-- Declare px4_msgs as a dependency -->
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
