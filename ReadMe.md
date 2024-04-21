@@ -2,7 +2,7 @@
 
 This package consists of C++ implementation of teleoperation and velocity controller for PX4 in ROS2. This project was inspired by python implementation done by : https://github.com/Jaeyoung-Lim/px4-offboard
 
-(./img/drone_Vid_warehouse-ezgif.com-video-to-gif-converter.gif)
+![px4-teleop](./img/drone_Vid_warehouse-ezgif.com-video-to-gif-converter.gif)
 
 ## Prerequisites
 - ROS2 Humble
