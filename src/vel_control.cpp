@@ -1,11 +1,7 @@
 #include "../include/vel_contro.hpp"
 
 OffboardControl::OffboardControl() : Node("minimal_publisher") {
-    // auto qos_profile = rclcpp::QoS(rclcpp::KeepLast(10)).best_effort().transient_local();
     auto qos_profile = rclcpp::SystemDefaultsQoS();
-
-
-
 
 
     status_sub_ = this->create_subscription<px4_msgs::msg::VehicleStatus>(
