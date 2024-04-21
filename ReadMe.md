@@ -112,4 +112,4 @@ ros2 launch quad_off_board teleop_launch.py
 
 
 ## Live Demo
-./videos/neat_tetelop(1)(1).mp4
+![PX-4](./img/neat_tetelop11-ezgif.com-video-to-gif-converter.gif)
