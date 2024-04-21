@@ -2,31 +2,36 @@
 
 PX4Visualizer::PX4Visualizer() : Node("visualizer") {
     // Initialize subscribers and publishers
+    // auto qos_profile = rclcpp::QoS(rclcpp::KeepLast(10)).best_effort().transient_local();
+    auto qos_profile = rclcpp::SystemDefaultsQoS();
+
+
+
     attitude_sub_ = this->create_subscription<px4_msgs::msg::VehicleAttitude>(
         "/fmu/out/vehicle_attitude",
-        rclcpp::QoS(10),
+        qos_profile,
         std::bind(&PX4Visualizer::vehicleAttitudeCallback, this, std::placeholders::_1));
     local_position_sub_ = this->create_subscription<px4_msgs::msg::VehicleLocalPosition>(
         "/fmu/out/vehicle_local_position",
-        rclcpp::QoS(10),
+        qos_profile,
         std::bind(&PX4Visualizer::vehicleLocalPositionCallback, this, std::placeholders::_1));
     setpoint_sub_ = this->create_subscription<px4_msgs::msg::TrajectorySetpoint>(
         "/fmu/in/trajectory_setpoint",
-        rclcpp::QoS(10),
+        qos_profile,
         std::bind(&PX4Visualizer::trajectorySetpointCallback, this, std::placeholders::_1));
 
     vehicle_pose_pub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>(
         "/visualizer/vehicle_pose",
-        rclcpp::QoS(10));
+        qos_profile);
     vehicle_vel_pub_ = this->create_publisher<visualization_msgs::msg::Marker>(
         "/visualizer/vehicle_velocity",
-        rclcpp::QoS(10));
+        qos_profile);
     vehicle_path_pub_ = this->create_publisher<nav_msgs::msg::Path>(
         "/visualizer/vehicle_path",
-        rclcpp::QoS(10));
+        qos_profile);
     setpoint_path_pub_ = this->create_publisher<nav_msgs::msg::Path>(
         "/visualizer/setpoint_path",
-        rclcpp::QoS(10));
+        qos_profile);
 
     // Initialize timer
     auto timer_callback = std::bind(&PX4Visualizer::cmdloopCallback, this);
