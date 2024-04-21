@@ -166,14 +166,14 @@ void OffboardControl::publish_vehicle_command(uint16_t command, float param1, fl
     auto msg = std::make_unique<px4_msgs::msg::VehicleCommand>();
     msg->param1 = param1;
     msg->param2 = param2;
-    msg->param7 = param7; // altitude value in takeoff command
-    msg->command = command; // command ID
-    msg->target_system = 1; // system which should execute the command
-    msg->target_component = 1; // component which should execute the command, 0 for all components
-    msg->source_system = 1; // system sending the command
-    msg->source_component = 1; // component sending the command
+    msg->param7 = param7; 
+    msg->command = command;
+    msg->target_system = 1;
+    msg->target_component = 1; 
+    msg->source_system = 1; 
+    msg->source_component = 1;
     msg->from_external = true;
-    msg->timestamp = rclcpp::Clock().now().nanoseconds() / 1000; // time in microseconds
+    msg->timestamp = rclcpp::Clock().now().nanoseconds() / 1000;
     vehicle_command_publisher_->publish(std::move(msg));
 }
 

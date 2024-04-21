@@ -1,7 +1,6 @@
 #include "../include/visualizer.hpp"
 
 PX4Visualizer::PX4Visualizer() : Node("visualizer") {
-    // Initialize subscribers and publishers
     // auto qos_profile = rclcpp::QoS(rclcpp::KeepLast(10)).best_effort().transient_local();
     auto qos_profile = rclcpp::SystemDefaultsQoS();
 
@@ -33,13 +32,11 @@ PX4Visualizer::PX4Visualizer() : Node("visualizer") {
         "/visualizer/setpoint_path",
         qos_profile);
 
-    // Initialize timer
     auto timer_callback = std::bind(&PX4Visualizer::cmdloopCallback, this);
     timer_ = this->create_wall_timer(std::chrono::milliseconds(50), timer_callback);
 }
 
 void PX4Visualizer::vehicleAttitudeCallback(const px4_msgs::msg::VehicleAttitude::SharedPtr msg) {
-    // Convert quaternion to attitude array
     vehicle_attitude_[0] = msg->q[0];
     vehicle_attitude_[1] = msg->q[1];
     vehicle_attitude_[2] = -msg->q[2]; // NED to ENU conversion
@@ -47,7 +44,6 @@ void PX4Visualizer::vehicleAttitudeCallback(const px4_msgs::msg::VehicleAttitude
 }
 
 void PX4Visualizer::vehicleLocalPositionCallback(const px4_msgs::msg::VehicleLocalPosition::SharedPtr msg) {
-    // Convert NED to ENU and update local position and velocity arrays
     vehicle_local_position_[0] = msg->x;
     vehicle_local_position_[1] = -msg->y; // NED to ENU conversion
     vehicle_local_position_[2] = -msg->z; // NED to ENU conversion
@@ -79,7 +75,6 @@ void PX4Visualizer::cmdloopCallback() {
     setpoint_path_msg_.poses.push_back(vectorToPoseMsg("map", setpoint_position_, vehicle_attitude_));
     setpoint_path_pub_->publish(setpoint_path_msg_);
 
-    // Publish velocity marker
     vehicle_vel_pub_->publish(createArrowMarker(1, vehicle_local_position_, vehicle_local_velocity_));
 }
 
